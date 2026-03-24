@@ -247,16 +247,8 @@ This project includes visualizations and results for academic/technical reports:
 - `images/prediction_residuals.png` — Residual analysis
 - `images/rolling_avg_trend.png` — 7-day rolling average trend
 
-## 👤 Author
+## 👩‍💻 Author
 
-**Onsel Fekih**  
-MSc Deep Learning Project  
-2024-2025
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
----
-
-**Questions or Issues?** Create a GitHub issue or contact the author.
+**Ons ELFEKIH**  **Guizani Eya**
+IT Engineering Student — Business Intelligence  
+🔗 [LinkedIn](https://www.linkedin.com/in/ons-elfekih) · [Portfolio](https://portfolio-elfekih-ons.vercel.app/)
