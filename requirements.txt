@@ -12,9 +12,3 @@ matplotlib==3.10.7
 # Deployment
 streamlit==1.45.1
 flask==3.1.0
-
-# Python version
-python==3.13.5
-
-# Utilities
-pickle5; python_version < "3.8"
