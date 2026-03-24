@@ -12,24 +12,24 @@ This project implements a time-series forecasting system using a real-world reta
 
 ```
 SalesSense/
-├── dataset/
-│   └── retail_store_inventory.csv    # Raw data (73,100 records)
-├── preprocessing.py                  # Data loading, normalization, sequence generation
-├── train_lstm.py                     # LSTM model training and evaluation
-├── train_gru.py                      # GRU model training and evaluation
-├── cross_validation.py               # 5-fold walk-forward time-series CV
-├── compare.py                        # Model comparison and metrics
-├── visualise_predictions.py          # Generate prediction plots
-├── streamlit_app.py                  # Interactive dashboard
-├── best_model.h5                     # Trained GRU model (production)
-├── gru_model.h5, lstm_model.h5       # Saved models
-├── scaler.pkl                        # MinMaxScaler for data normalization
-├── X_train.npy, X_test.npy           # Preprocessed sequences
-├── y_train.npy, y_test.npy           # Target values
-├── gru_y_pred.npy, lstm_y_pred.npy   # Model predictions
-├── requirements.txt                  # Python dependencies
-├── runtime.txt                       # Python version for deployment
-└── README.md                         # This file
+├── 📂 dataset/
+│   └── 📊 retail_store_inventory.csv    # Raw data (73,100 records)
+├── 🐍 preprocessing.py                  # Data loading, normalization, sequence generation
+├── 🐍 train_lstm.py                     # LSTM model training and evaluation
+├── 🐍 train_gru.py                      # GRU model training and evaluation
+├── 🐍 cross_validation.py               # 5-fold walk-forward time-series CV
+├── 🐍 compare.py                        # Model comparison and metrics
+├── 🐍 visualise_predictions.py          # Generate prediction plots
+├── 🐍 streamlit_app.py                  # Interactive dashboard
+├── 🤖 best_model.h5                     # Trained GRU model (production)
+├── 🤖 gru_model.h5, lstm_model.h5       # Saved models
+├── 📦 scaler.pkl                        # MinMaxScaler for data normalization
+├── 📈 X_train.npy, X_test.npy           # Preprocessed sequences
+├── 📈 y_train.npy, y_test.npy           # Target values
+├── 📈 gru_y_pred.npy, lstm_y_pred.npy   # Model predictions
+├── 📄 requirements.txt                  # Python dependencies
+├── 📄 runtime.txt                       # Python version for deployment
+└── 📖 README.md                         # This file
 ```
 
 ## 🚀 Quick Start
