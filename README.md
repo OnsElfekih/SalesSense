@@ -250,5 +250,4 @@ This project includes visualizations and results for academic/technical reports:
 ## 👩‍💻 Authors
 
 **Ons ELFEKIH**  **Guizani Eya**
-IT Engineering Student — Business Intelligence  
-🔗 [LinkedIn](https://www.linkedin.com/in/ons-elfekih) · [Portfolio](https://portfolio-elfekih-ons.vercel.app/)
+IT Engineering Students — Business Intelligence  
