@@ -247,7 +247,7 @@ This project includes visualizations and results for academic/technical reports:
 - `images/prediction_residuals.png` — Residual analysis
 - `images/rolling_avg_trend.png` — 7-day rolling average trend
 
-## 👩‍💻 Author
+## 👩‍💻 Authors
 
 **Ons ELFEKIH**  **Guizani Eya**
 IT Engineering Student — Business Intelligence  
