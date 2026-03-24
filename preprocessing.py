@@ -1,26 +1,32 @@
+"""
+preprocessing.py
+----------------
+Load raw dataset, aggregate to daily sales, normalize, create sequences.
+"""
 
-import numpy as np
-import pandas as pd
+import random, numpy as np, pandas as pd
+random.seed(42)
+np.random.seed(42)
 import pickle
 from sklearn.preprocessing import MinMaxScaler
 
 # ── Config ──────────────────────────────────────────────────────────────────
-DATA_PATH = r"dataset\retail_store_inventory.csv" 
-SEQ_LEN     = 14          # number of days in input sequence
+DATA_PATH   = r"dataset\retail_store_inventory.csv"
+SEQ_LEN     = 14          # 14-day window to predict next day
 TRAIN_RATIO = 0.80
-SCALER_PATH = "scaler.pkl"  # file to save the scaler
+SCALER_PATH = "scaler.pkl"
 
 
 # ── 1. Load ──────────────────────────────────────────────────────────────────
 def load_and_aggregate(path: str) -> pd.DataFrame:
     df = pd.read_csv(path)
-    df["Date"] = pd.to_datetime(df["Date"])  # # convert Date column to datetime
+    df["Date"] = pd.to_datetime(df["Date"])
     daily = (
-        df.groupby("Date")["Units Sold"]  # group by date
-        .sum()                             # sum sales per day
-        .reset_index()                     # reset index
-        .sort_values("Date")               # sort by date ascending
-        .rename(columns={"Units Sold": "sales"})  # rename column to 'sales'
+        df.groupby("Date")["Units Sold"]
+        .sum()
+        .reset_index()
+        .sort_values("Date")
+        .rename(columns={"Units Sold": "sales"})
     )
     return daily
 
@@ -30,24 +36,24 @@ def validate(daily: pd.DataFrame) -> None:
     assert daily.isnull().sum().sum() == 0, "Missing values found"
     assert (daily["sales"] >= 0).all(),     "Negative sales found"
     print(f"[OK] {len(daily)} daily records | "
-          f"{daily['Date'].min().date()} → {daily['Date'].max().date()}") # print number of days and date range
+          f"{daily['Date'].min().date()} → {daily['Date'].max().date()}")
 
 
 # ── 3. Normalize ─────────────────────────────────────────────────────────────
 def normalize(values: np.ndarray) -> tuple[np.ndarray, MinMaxScaler]:
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled = scaler.fit_transform(values.reshape(-1, 1)).flatten()
-    return scaled, scaler  # return normalized values and the scaler
+    return scaled, scaler
 
 
 # ── 4. Sequences ─────────────────────────────────────────────────────────────
 def make_sequences(scaled: np.ndarray, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
-    X, y = [], []  # lists to store input sequences and targets
+    X, y = [], []
     for i in range(len(scaled) - seq_len):
         X.append(scaled[i : i + seq_len])
         y.append(scaled[i + seq_len])
-    return np.array(X), np.array(y)  # convert lists to numpy arrays
- 
+    return np.array(X), np.array(y)
+
 
 # ── 5. Train/test split (time-based) ─────────────────────────────────────────
 def split(X: np.ndarray, y: np.ndarray, ratio: float) -> tuple:
@@ -60,8 +66,8 @@ def run():
     daily  = load_and_aggregate(DATA_PATH)
     validate(daily)
 
-    values         = daily["sales"].values.astype(float)  # extract sales as float
-    scaled, scaler = normalize(values)                   # normalize sales values
+    values         = daily["sales"].values.astype(float)
+    scaled, scaler = normalize(values)
 
     # Save scaler for inference
     with open(SCALER_PATH, "wb") as f:
