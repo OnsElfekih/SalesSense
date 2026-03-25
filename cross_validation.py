@@ -10,6 +10,10 @@ Run: python cross_validation.py
 import os, pickle, random
 import numpy as np
 
+# ── Ensure photos folder exists ───────────────────────────────────────────────
+if not os.path.exists("photos"):
+    os.makedirs("photos")
+
 # ── Seed BEFORE any TensorFlow import ────────────────────────────────────────
 SEED = 42
 random.seed(SEED)
@@ -161,6 +165,6 @@ else:
 
     plt.suptitle("5-Fold Walk-Forward Cross-Validation — LSTM vs GRU", fontweight="bold")
     plt.tight_layout()
-    plt.savefig("cv_results.png", dpi=130, bbox_inches="tight")
-    print("\nChart saved → cv_results.png")
+    plt.savefig("photos/cv_results.png", dpi=130, bbox_inches="tight")
+    print("\nChart saved → photos/cv_results.png")
     print("Cross-validation complete.")

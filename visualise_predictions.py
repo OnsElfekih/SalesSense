@@ -11,6 +11,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
+# ── Ensure photos folder exists ───────────────────────────────────────────────
+if not os.path.exists("photos"):
+    os.makedirs("photos")
+
 # ── Load arrays ───────────────────────────────────────────────────────────────
 FILES = ["y_true.npy", "lstm_y_pred.npy", "gru_y_pred.npy"]
 if not all(os.path.exists(f) for f in FILES):
@@ -55,8 +59,8 @@ ax.set_ylabel("Units Sold")
 ax.legend(fontsize=9)
 ax.grid(axis="y", alpha=0.3)
 plt.tight_layout()
-plt.savefig("prediction_full.png", dpi=130, bbox_inches="tight")
-print("\nSaved → prediction_full.png")
+plt.savefig("photos/prediction_full.png", dpi=130, bbox_inches="tight")
+print("\nSaved → photos/prediction_full.png")
 plt.close()
 
 # ── Plot 2: Zoomed — first 60 days (shows detail better) ─────────────────────
@@ -74,8 +78,8 @@ ax.set_ylabel("Units Sold")
 ax.legend(fontsize=9)
 ax.grid(axis="y", alpha=0.3)
 plt.tight_layout()
-plt.savefig("prediction_zoom.png", dpi=130, bbox_inches="tight")
-print("Saved → prediction_zoom.png")
+plt.savefig("photos/prediction_zoom.png", dpi=130, bbox_inches="tight")
+print("Saved → photos/prediction_zoom.png")
 plt.close()
 
 # ── Plot 3: Residuals (error over time) ───────────────────────────────────────
@@ -101,8 +105,8 @@ axes[1].grid(axis="y", alpha=0.3)
 
 plt.suptitle("Prediction Residuals — Test Set", fontsize=13, fontweight="bold")
 plt.tight_layout()
-plt.savefig("prediction_residuals.png", dpi=130, bbox_inches="tight")
-print("Saved → prediction_residuals.png")
+plt.savefig("photos/prediction_residuals.png", dpi=130, bbox_inches="tight")
+print("Saved → photos/prediction_residuals.png")
 plt.close()
 
-print("\nAll charts saved. Use prediction_full.png in your report.")
+print("\nAll charts saved in photos/ folder. Use photos/prediction_full.png in your report.")
