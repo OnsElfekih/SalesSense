@@ -1,5 +1,7 @@
 # SalesSense: Retail Sales Forecasting with Deep Learning
 
+![SalesSense Logo](images/logo.png)
+
 A deep learning project for predicting daily retail store sales using LSTM and GRU neural networks. Includes data preprocessing, model training, cross-validation evaluation, and a production-ready Streamlit dashboard.
 
 ## 🎯 Project Overview
@@ -14,12 +16,20 @@ This project implements a time-series forecasting system using a real-world reta
 SalesSense/
 ├── 📂 dataset/
 │   └── 📊 retail_store_inventory.csv    # Raw data (73,100 records)
+├── � images/
+│   ├── 🖼️ logo.png                       # Main brand logo
+│   ├── 🖼️ logo_icon.png                  # Icon only
+│   ├── 📊 cv_results.png                 # Cross-validation results
+│   ├── 📊 prediction_full.png            # Full prediction chart
+│   ├── 📊 prediction_zoom.png            # Zoomed prediction view
+│   └── 📊 prediction_residuals.png       # Residual analysis
 ├── 🐍 preprocessing.py                  # Data loading, normalization, sequence generation
 ├── 🐍 train_lstm.py                     # LSTM model training and evaluation
 ├── 🐍 train_gru.py                      # GRU model training and evaluation
 ├── 🐍 cross_validation.py               # 5-fold walk-forward time-series CV
 ├── 🐍 compare.py                        # Model comparison and metrics
 ├── 🐍 visualise_predictions.py          # Generate prediction plots
+├── 🐍 generate_logo.py                  # Logo generation script
 ├── 🐍 streamlit_app.py                  # Interactive dashboard
 ├── 🤖 best_model.h5                     # Trained GRU model (production)
 ├── 🤖 gru_model.h5, lstm_model.h5       # Saved models

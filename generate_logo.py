@@ -13,7 +13,7 @@ from matplotlib.patches import FancyBboxPatch, Polygon
 import os
 
 # ── Configuration ──────────────────────────────────────────────────────────
-OUTPUT_DIR = "."
+OUTPUT_DIR = "images"
 LOGO_FILENAME = "logo.png"
 LOGO_SIZE = (1024, 1024)  # High resolution
 DPI = 150
