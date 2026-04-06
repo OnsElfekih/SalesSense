@@ -1,0 +1,40 @@
+# This file specifies files that should NOT be uploaded to Google Cloud
+# when using commands like: gcloud app deploy
+
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+env/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Tests
+.pytest_cache
+.coverage
+
+# Documentation
+docs/
+*.md
+
+# Photos/extras
+photos/
+*.pdf
+*.tex

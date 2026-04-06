@@ -1,0 +1,41 @@
+# Cloud Build configuration for automated deployment
+# Automatically builds and deploys when you push to a Git repository
+
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/sales-sense:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/sales-sense:latest'
+      - '.'
+
+  # Step 2: Push image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/sales-sense'
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/run'
+    args:
+      - 'deploy'
+      - 'sales-sense'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/sales-sense:$SHORT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--platform'
+      - 'managed'
+
+images:
+  - 'gcr.io/$PROJECT_ID/sales-sense:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/sales-sense:latest'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  substitution_option: 'ALLOW_LOOSE'

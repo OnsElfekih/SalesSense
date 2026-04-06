@@ -9,6 +9,9 @@ pandas==2.0.3
 # Visualisation
 matplotlib==3.8.0
 
-# Deployment
-streamlit==1.30.0
+# Web Framework (for Cloud Run)
 flask==3.1.0
+gunicorn==21.2.0
+
+# Utilities
+python-dotenv==1.0.0

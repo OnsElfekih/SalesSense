@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 Retail Sales Forecasting - SalesSense</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 400px;
+        }
+        
+        .chart-container h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.2em;
+        }
+        
+        canvas {
+            max-height: 350px;
+        }
+        
+        .footer {
+            background: #f5f7fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #667eea;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Retail Sales Forecasting</h1>
+            <p>Deep Learning time-series prediction using LSTM and GRU networks</p>
+        </div>
+        
+        <div class="content">
+            <div id="metrics-section" class="metrics-grid"></div>
+            
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Predictions vs Actual</h3>
+                    <canvas id="predictions-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>RMSE & MAE Comparison</h3>
+                    <canvas id="metrics-chart"></canvas>
+                </div>
+                
+                <div class="chart-container" style="grid-column: 1 / -1;">
+                    <h3>Last 90 Days Sales</h3>
+                    <canvas id="sales-chart"></canvas>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; padding: 30px; background: #f5f7fa; border-radius: 10px;">
+                <h2 style="margin-bottom: 20px;">🔮 Make a Prediction</h2>
+                <p style="margin-bottom: 20px; color: #666;">Enter 14 days of historical sales data (Day 1 to Day 14) to predict Day 15</p>
+                
+                <div id="input-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <!-- Input fields will be generated by JavaScript -->
+                </div>
+                
+                <button id="predict-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;">
+                    Predict Day 15
+                </button>
+                
+                <div id="result-section" style="margin-top: 30px; display: none;">
+                    <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h3 style="margin-bottom: 15px;">Prediction Result</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="text-align: center; padding: 20px; background: #f0f4ff; border-radius: 8px;">
+                                <p style="color: #666; margin-bottom: 10px;">Predicted Sales (Day 15)</p>
+                                <p id="prediction-value" style="font-size: 2.5em; font-weight: bold; color: #667eea;">--</p>
+                                <p style="color: #999; font-size: 0.9em;">units</p>
+                            </div>
+                            <div style="height: 300px;">
+                                <canvas id="prediction-histogram"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>SalesSense | Powered by TensorFlow, Keras & Flask | Deployed on Google Cloud Run</p>
+        </div>
+    </div>
+    
+    <script>
+        // Chart.js color scheme
+        const colors = {
+            primary: 'rgb(102, 126, 234)',
+            secondary: 'rgb(118, 75, 162)',
+            success: 'rgb(76, 175, 80)',
+            danger: 'rgb(244, 67, 54)'
+        };
+        
+        // Load overview metrics
+        async function loadMetrics() {
+            try {
+                const res = await fetch('/api/overview');
+                const data = await res.json();
+                
+                const metricsSection = document.getElementById('metrics-section');
+                metricsSection.innerHTML = `
+                    <div class="metric-card">
+                        <div class="metric-label">Best Model</div>
+                        <div class="metric-value">${data.best_model}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GRU CV RMSE</div>
+                        <div class="metric-value">1,041</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">GRU Test MAE</div>
+                        <div class="metric-value">${Math.round(data.gru_test_mae)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Test Samples</div>
+                        <div class="metric-value">${data.test_samples}</div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Error loading metrics:', err);
+            }
+        }
+        
+        // Load predictions chart
+        async function loadPredictions() {
+            try {
+                const res = await fetch('/api/predictions');
+                const data = await res.json();
+                
+                const ctx = document.getElementById('predictions-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.days,
+                        datasets: [
+                            {
+                                label: 'Actual',
+                                data: data.actual,
+                                borderColor: colors.danger,
+                                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'LSTM Prediction',
+                                data: data.lstm_predictions,
+                                borderColor: colors.primary,
+                                backgroundColor: 'transparent',
+                                tension: 0.3,
+                                borderDash: [5, 5]
+                            },
+                            {
+                                label: 'GRU Prediction',
+                                data: data.gru_predictions,
+                                borderColor: colors.secondary,
+                                backgroundColor: 'transparent',
+                                tension: 0.3,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error loading predictions:', err);
+            }
+        }
+        
+        // Load metrics comparison chart
+        async function loadMetricsComparison() {
+            try {
+                const res = await fetch('/api/rmse-mae-comparison');
+                const data = await res.json();
+                
+                const ctx = document.getElementById('metrics-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.models,
+                        datasets: [
+                            {
+                                label: 'RMSE',
+                                data: data.rmse,
+                                backgroundColor: colors.primary,
+                            },
+                            {
+                                label: 'MAE',
+                                data: data.mae,
+                                backgroundColor: colors.secondary,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error loading metrics comparison:', err);
+            }
+        }
+        
+        // Load daily sales chart
+        async function loadDailySales() {
+            try {
+                const res = await fetch('/api/daily-sales');
+                const data = await res.json();
+                
+                const ctx = document.getElementById('sales-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [
+                            {
+                                label: 'Daily Sales',
+                                data: data.sales,
+                                borderColor: colors.success,
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error loading daily sales:', err);
+            }
+        }
+        
+        // Initialize input fields for prediction
+        function initializePredictionInputs() {
+            const inputSection = document.getElementById('input-section');
+            inputSection.innerHTML = '';
+            
+            for (let i = 1; i <= 14; i++) {
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; flex-direction: column; gap: 5px;';
+                div.innerHTML = `
+                    <label style="font-weight: bold; color: #333; font-size: 0.9em;">Day ${i}</label>
+                    <input type="number" id="day-${i}" placeholder="Sales" 
+                        style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.95em;"
+                        value="${Math.floor(Math.random() * 10000) + 1000}">
+                `;
+                inputSection.appendChild(div);
+            }
+        }
+        
+        // Make prediction with user input
+        async function makePrediction() {
+            try {
+                const sequence = [];
+                for (let i = 1; i <= 14; i++) {
+                    const val = parseFloat(document.getElementById(`day-${i}`).value);
+                    if (isNaN(val)) {
+                        alert(`Please enter valid number for Day ${i}`);
+                        return;
+                    }
+                    sequence.push(val);
+                }
+                
+                const res = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sequence: sequence })
+                });
+                
+                const data = await res.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                const prediction = data.prediction;
+                document.getElementById('prediction-value').textContent = Math.round(prediction).toLocaleString();
+                
+                // Show histogram
+                showPredictionHistogram(sequence, prediction);
+                document.getElementById('result-section').style.display = 'block';
+                
+            } catch (err) {
+                console.error('Error making prediction:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        // Display histogram of sequence + prediction
+        function showPredictionHistogram(sequence, prediction) {
+            const allValues = [...sequence, prediction];
+            const labels = [];
+            for (let i = 1; i <= 14; i++) {
+                labels.push(`Day ${i}`);
+            }
+            labels.push('Day 15 (Pred)');
+            
+            const ctx = document.getElementById('prediction-histogram').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.predictionChart) {
+                window.predictionChart.destroy();
+            }
+            
+            window.predictionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Sales',
+                            data: allValues,
+                            backgroundColor: allValues.map((_, i) => 
+                                i < 14 ? 'rgba(76, 175, 80, 0.7)' : 'rgba(244, 67, 54, 0.7)'
+                            ),
+                            borderColor: allValues.map((_, i) => 
+                                i < 14 ? 'rgb(76, 175, 80)' : 'rgb(244, 67, 54)'
+                            ),
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize all charts
+        window.addEventListener('load', () => {
+            loadMetrics();
+            loadPredictions();
+            loadMetricsComparison();
+            loadDailySales();
+            initializePredictionInputs();
+            
+            // Add event listener to predict button
+            document.getElementById('predict-btn').addEventListener('click', makePrediction);
+        });
+    </script>
+</body>
+</html>
