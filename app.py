@@ -113,14 +113,16 @@ def api_rmse_mae():
 
 @app.route("/api/daily-sales")
 def api_daily_sales():
-    """Get daily sales time series."""
-    if 'daily' not in artifacts:
-        return jsonify({"error": "Data not loaded"}), 500
+    """Get last 90 days predicted sales time series."""
+    if 'gru_pred' not in artifacts:
+        return jsonify({"error": "Predictions not loaded"}), 500
     
-    daily = artifacts['daily']
+    predictions = artifacts['gru_pred'][-90:]
+    dates = pd.date_range(end=pd.Timestamp.now(), periods=90, freq='D')
+    
     data = {
-        "dates": daily["Date"].dt.strftime("%Y-%m-%d").tolist()[-90:],
-        "sales": daily["sales"].tolist()[-90:]
+        "dates": dates.strftime("%Y-%m-%d").tolist(),
+        "sales": predictions.tolist()
     }
     return jsonify(data)
 

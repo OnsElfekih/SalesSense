@@ -184,23 +184,9 @@
                 </div>
             </div>
 
-            <div id="metrics-section" class="metrics-grid"></div>
-            
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Predictions vs Actual</h3>
-                    <canvas id="predictions-chart"></canvas>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>RMSE & MAE Comparison</h3>
-                    <canvas id="metrics-chart"></canvas>
-                </div>
-                
-                <div class="chart-container" style="grid-column: 1 / -1;">
-                    <h3>Last 90 Days Sales</h3>
-                    <canvas id="sales-chart"></canvas>
-                </div>
+            <div class="chart-container" style="margin-top: 40px;">
+                <h3>Last 90 Days Predictions</h3>
+                <canvas id="sales-chart"></canvas>
             </div>
         </div>
         
@@ -218,138 +204,7 @@
             danger: 'rgb(244, 67, 54)'
         };
         
-        // Load overview metrics
-        async function loadMetrics() {
-            try {
-                const res = await fetch('/api/overview');
-                const data = await res.json();
-                
-                const metricsSection = document.getElementById('metrics-section');
-                metricsSection.innerHTML = `
-                    <div class="metric-card">
-                        <div class="metric-label">Best Model</div>
-                        <div class="metric-value">${data.best_model}</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">GRU CV RMSE</div>
-                        <div class="metric-value">1,041</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">GRU Test MAE</div>
-                        <div class="metric-value">${Math.round(data.gru_test_mae)}</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Test Samples</div>
-                        <div class="metric-value">${data.test_samples}</div>
-                    </div>
-                `;
-            } catch (err) {
-                console.error('Error loading metrics:', err);
-            }
-        }
-        
-        // Load predictions chart
-        async function loadPredictions() {
-            try {
-                const res = await fetch('/api/predictions');
-                const data = await res.json();
-                
-                const ctx = document.getElementById('predictions-chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.days,
-                        datasets: [
-                            {
-                                label: 'Actual',
-                                data: data.actual,
-                                borderColor: colors.danger,
-                                backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                                tension: 0.3,
-                                fill: true
-                            },
-                            {
-                                label: 'LSTM Prediction',
-                                data: data.lstm_predictions,
-                                borderColor: colors.primary,
-                                backgroundColor: 'transparent',
-                                tension: 0.3,
-                                borderDash: [5, 5]
-                            },
-                            {
-                                label: 'GRU Prediction',
-                                data: data.gru_predictions,
-                                borderColor: colors.secondary,
-                                backgroundColor: 'transparent',
-                                tension: 0.3,
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error('Error loading predictions:', err);
-            }
-        }
-        
-        // Load metrics comparison chart
-        async function loadMetricsComparison() {
-            try {
-                const res = await fetch('/api/rmse-mae-comparison');
-                const data = await res.json();
-                
-                const ctx = document.getElementById('metrics-chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.models,
-                        datasets: [
-                            {
-                                label: 'RMSE',
-                                data: data.rmse,
-                                backgroundColor: colors.primary,
-                            },
-                            {
-                                label: 'MAE',
-                                data: data.mae,
-                                backgroundColor: colors.secondary,
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error('Error loading metrics comparison:', err);
-            }
-        }
-        
-        // Load daily sales chart
+        // Load daily sales chart with predicted data
         async function loadDailySales() {
             try {
                 const res = await fetch('/api/daily-sales');
@@ -362,10 +217,10 @@
                         labels: data.dates,
                         datasets: [
                             {
-                                label: 'Daily Sales',
+                                label: 'Predicted Sales (Last 90 Days)',
                                 data: data.sales,
-                                borderColor: colors.success,
-                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                borderColor: colors.primary,
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
                                 tension: 0.3,
                                 fill: true,
                                 pointRadius: 0
@@ -500,11 +355,8 @@
             });
         }
         
-        // Initialize all charts
+        // Initialize all
         window.addEventListener('load', () => {
-            loadMetrics();
-            loadPredictions();
-            loadMetricsComparison();
             loadDailySales();
             initializePredictionInputs();
             
