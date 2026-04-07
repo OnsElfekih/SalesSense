@@ -183,11 +183,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="chart-container" style="margin-top: 40px;">
-                <h3>Last 90 Days Predictions</h3>
-                <canvas id="sales-chart"></canvas>
-            </div>
         </div>
         
         <div class="footer">
@@ -203,49 +198,6 @@
             success: 'rgb(76, 175, 80)',
             danger: 'rgb(244, 67, 54)'
         };
-        
-        // Load daily sales chart with predicted data
-        async function loadDailySales() {
-            try {
-                const res = await fetch('/api/daily-sales');
-                const data = await res.json();
-                
-                const ctx = document.getElementById('sales-chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.dates,
-                        datasets: [
-                            {
-                                label: 'Predicted Sales (Last 90 Days)',
-                                data: data.sales,
-                                borderColor: colors.primary,
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                                tension: 0.3,
-                                fill: true,
-                                pointRadius: 0
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error('Error loading daily sales:', err);
-            }
-        }
         
         // Initialize input fields for prediction
         function initializePredictionInputs() {
@@ -357,7 +309,6 @@
         
         // Initialize all
         window.addEventListener('load', () => {
-            loadDailySales();
             initializePredictionInputs();
             
             // Add event listener to predict button
