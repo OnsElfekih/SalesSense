@@ -1,12 +1,10 @@
 # SalesSense: Retail Sales Forecasting with Deep Learning
 
-![SalesSense Logo](images/logo.png)
-
-A deep learning project for predicting daily retail store sales using LSTM and GRU neural networks. Includes data preprocessing, model training, cross-validation evaluation, and a production-ready Streamlit dashboard.
+A production-ready deep learning application for predicting daily retail store sales using LSTM and GRU neural networks. Built with Flask and deployed on Google Cloud Run.
 
 ## 🎯 Project Overview
 
-This project implements a time-series forecasting system using a real-world retail store inventory dataset spanning 2022-2024 (731 days, 73,100 records). The goal is to predict daily sales using a 14-day sliding window with two recurrent neural network architectures: LSTM and GRU.
+This project implements a time-series forecasting system using real-world retail store inventory data (2022-2024, 731 days, 73,100 records). The goal is to predict daily sales using a 14-day sliding window with two recurrent neural network architectures: LSTM and GRU.
 
 **Best Model:** GRU with a mean RMSE of **1,041.34 units** (5-fold cross-validation)
 
@@ -15,44 +13,42 @@ This project implements a time-series forecasting system using a real-world reta
 ```
 SalesSense/
 ├── 📂 dataset/
-│   └── 📊 retail_store_inventory.csv    # Raw data (73,100 records)
-├── � images/
-│   ├── 🖼️ logo.png                       # Main brand logo
-│   ├── 🖼️ logo_icon.png                  # Icon only
-│   ├── 📊 cv_results.png                 # Cross-validation results
-│   ├── 📊 prediction_full.png            # Full prediction chart
-│   ├── 📊 prediction_zoom.png            # Zoomed prediction view
-│   └── 📊 prediction_residuals.png       # Residual analysis
-├── 🐍 preprocessing.py                  # Data loading, normalization, sequence generation
-├── 🐍 train_lstm.py                     # LSTM model training and evaluation
-├── 🐍 train_gru.py                      # GRU model training and evaluation
-├── 🐍 cross_validation.py               # 5-fold walk-forward time-series CV
-├── 🐍 compare.py                        # Model comparison and metrics
-├── 🐍 visualise_predictions.py          # Generate prediction plots
-├── 🐍 generate_logo.py                  # Logo generation script
-├── 🐍 streamlit_app.py                  # Interactive dashboard
-├── 🤖 best_model.h5                     # Trained GRU model (production)
-├── 🤖 gru_model.h5, lstm_model.h5       # Saved models
-├── 📦 scaler.pkl                        # MinMaxScaler for data normalization
-├── 📈 X_train.npy, X_test.npy           # Preprocessed sequences
-├── 📈 y_train.npy, y_test.npy           # Target values
-├── 📈 gru_y_pred.npy, lstm_y_pred.npy   # Model predictions
-├── 📄 requirements.txt                  # Python dependencies
-├── 📄 runtime.txt                       # Python version for deployment
-└── 📖 README.md                         # This file
+│   └── retail_store_inventory.csv       # Raw data (73,100 records)
+├── 📂 photos/                           # Project images
+├── 📂 templates/
+│   └── index.html                       # Web dashboard (HTML/CSS/JS)
+├── app.py                               # Flask web application & API
+├── preprocessing.py                     # Data loading, normalization, sequence generation
+├── train_lstm.py                        # LSTM model training and evaluation
+├── train_gru.py                         # GRU model training and evaluation
+├── cross_validation.py                  # 5-fold walk-forward time-series CV
+├── compare.py                           # Model comparison and metrics
+├── visualise_predictions.py             # Generate prediction plots
+├── generate_logo.py                     # Logo generation script
+├── best_model.h5                        # Trained GRU model (production)
+├── gru_model.h5, lstm_model.h5          # Saved models
+├── X_train.npy, X_test.npy              # Preprocessed sequences
+├── y_train.npy, y_test.npy              # Target values
+├── gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
+├── Dockerfile                           # Docker container configuration
+├── cloudbuild.yaml                      # Google Cloud Build config
+├── requirements.txt                     # Python dependencies
+├── requirements-gcp.txt                 # GCP dependencies
+├── README.md                            # This file
+└── salesPredictionNotebook.ipynb        # Jupyter notebook
 ```
 
 ## 🚀 Quick Start
 
-### 1. Clone & Install Dependencies
+### Local Development
+
+#### 1. Install Dependencies
 
 ```bash
-git clone https://github.com/OnsElfekih/SalesSense.git
-cd SalesSense
 pip install -r requirements.txt
 ```
 
-### 2. Preprocess Data
+#### 2. Preprocess Data
 
 ```bash
 python preprocessing.py
@@ -61,9 +57,8 @@ python preprocessing.py
 Outputs:
 - `X_train.npy`, `X_test.npy` — Normalized sequences
 - `y_train.npy`, `y_test.npy` — Target values
-- `scaler.pkl` — MinMaxScaler for inference
 
-### 3. Train Models
+#### 3. Train Models (Optional)
 
 ```bash
 # Train LSTM
@@ -71,27 +66,65 @@ python train_lstm.py
 
 # Train GRU
 python train_gru.py
-```
 
-### 4. Evaluate with Cross-Validation
+# Compare models
+python compare.py
 
-```bash
+# Cross-validation evaluation
 python cross_validation.py
 ```
 
-### 5. Compare Models
+#### 4. Run Flask Application
 
 ```bash
-python compare.py
+python app.py
 ```
 
-### 6. Launch Dashboard
+Visit `http://localhost:5000` in your browser.
+
+## 🌐 Deployment on Google Cloud Run
+
+### Prerequisites
+- Google Cloud account with Billing enabled
+- `gcloud` CLI installed
+- Docker installed (or use Cloud Build)
+
+### Deployment Steps
 
 ```bash
-streamlit run streamlit_app.py
+# Login to Google Cloud
+gcloud auth login
+
+# Set your GCP project
+gcloud config set project YOUR_PROJECT_ID
+
+# Deploy to Cloud Run
+gcloud run deploy sales-sense \
+  --source . \
+  --platform managed \
+  --region europe-west9 \
+  --allow-unauthenticated \
+  --memory 2Gi
 ```
 
-Visit `http://localhost:8501` in your browser.
+After deployment, you'll receive a URL like:
+```
+https://sales-sense-xxxxx-ew.a.run.app
+```
+
+### Using Cloud Build (CI/CD)
+
+The `cloudbuild.yaml` file enables automatic deployment from Git:
+
+```bash
+# Push code to trigger build
+git push origin main
+```
+
+Cloud Build will:
+1. Build Docker image
+2. Push to Container Registry
+3. Deploy to Cloud Run
 
 ## 📊 Model Architecture
 
@@ -113,151 +146,162 @@ Dense: 1 unit (output)
 
 ## 📈 Results
 
-### Single-Split Performance (test set: 144 days)
-
-| Model | RMSE | MAE | Notes |
-|-------|------|-----|-------|
-| LSTM | 1,058.01 | 854.34 | Single split baseline |
-| GRU | 1,058.54 | 854.10 | Single split baseline |
-
 ### 5-Fold Walk-Forward Cross-Validation
 
-| Model | Mean RMSE | Performance |
-|-------|-----------|-------------|
-| **GRU** | **1,041.34** | ✅ Selected (stable, fewer params) |
-| LSTM | 1,045.84 | Marginally higher RMSE |
+| Model | Mean RMSE | MAE | Performance |
+|-------|-----------|-----|-------------|
+| **GRU** | **1,041.34** | 854.10 | ✅ Selected |
+| LSTM | 1,045.84 | 854.34 | Baseline |
 
 **Key Findings:**
-- Both models capture the overall trend well
-- GRU achieves slightly lower RMSE with fewer parameters
-- GRU exhibits more stable generalisation across folds
-- Peak error occurs at Fold 3 (middle of dataset), then improves as training data grows
-- Models struggle with daily fluctuations (univariate data, no external features)
+- Both models capture overall trends well
+- GRU achieves lower RMSE with fewer parameters
+- GRU exhibits more stable generalization across folds
 - Error is ~8% relative to mean daily sales (13,200 units)
 
-## 🎨 Dashboard Features
+## 🖥️ Web Application Features
 
-The Streamlit app includes:
+### Dashboard (HTML/JS)
 
-- **Overview** — Key metrics and dataset summary
-- **EDA** — Exploratory data analysis with visualizations
-- **Model Results** — Detailed metrics, comparison charts, residual analysis
-- **Predict** — Interactive forecasting with live predictions
+**Prediction Section (Top):**
+- Interactive 14-day sales input fields
+- "Predict Day 15" button
+- Real-time prediction with histogram visualization
 
-## 🌐 Deployment
+**Analytics Section:**
+- Key metrics cards (Best Model, RMSE, MAE, Test Samples)
+- Predictions vs Actual chart (line plot)
+- RMSE & MAE comparison (bar chart)
+- Last 90 days sales trend (line chart)
 
-### Streamlit Cloud
+## 🔌 Flask API Endpoints
 
-App URL: [salessense-retailsalesforecasting.streamlit.app](https://salessense-retailsalesforecasting.streamlit.app)
+### GET /
+Serves the web dashboard
 
-**Deployment Steps:**
+### GET /api/overview
+Returns model metrics:
+```json
+{
+  "best_model": "GRU",
+  "gru_test_mae": 854.10,
+  "test_samples": 144
+}
+```
 
-1. Push code to GitHub
-2. Connect repo to Streamlit Cloud
-3. Specify `streamlit_app.py` as main file
-4. Set Python version in `runtime.txt` (currently 3.11.8)
+### GET /api/predictions
+Returns comparison data:
+```json
+{
+  "days": [...],
+  "actual": [...],
+  "lstm_predictions": [...],
+  "gru_predictions": [...]
+}
+```
 
-**Required Files in Repo:**
-- ✅ `streamlit_app.py`
-- ✅ `best_model.h5` (GRU)
-- ✅ `scaler.pkl` (MinMaxScaler)
-- ✅ `X_test.npy, y_test.npy`
-- ✅ `lstm_y_pred.npy, gru_y_pred.npy`
-- ✅ `requirements.txt`
-- ✅ `runtime.txt`
+### GET /api/rmse-mae-comparison
+Returns model comparison metrics
+
+### GET /api/daily-sales
+Returns last 90 days of sales data
+
+### POST /api/predict
+Makes a prediction given 14-day sequence:
+```json
+{
+  "sequence": [1000, 1100, 1050, ...]
+}
+```
+
+Response:
+```json
+{
+  "prediction": 1234.56
+}
+```
 
 ## 📋 Requirements
 
-```
-tensorflow==2.17.0
-scikit-learn==1.3.1
-numpy==1.26.4
-pandas==2.0.3
-matplotlib==3.8.0
-streamlit==1.30.0
-flask==3.1.0
-```
+**Python:** 3.11+
 
-**Python Version:** 3.11.8+
+**Core Dependencies:**
+- TensorFlow 2.17.0
+- Flask 3.1.0
+- NumPy 1.26.4
+- Pandas 2.0.3
+- Scikit-learn 1.3.1
 
-## 📖 Usage Examples
+See `requirements.txt` for complete list.
 
-### Make a Single Prediction
+## 🛠️ Troubleshooting
 
-```python
-from tensorflow.keras.models import load_model
-import pickle
-import numpy as np
-
-# Load model and scaler
-model = load_model("best_model.h5", compile=False)
-with open("scaler.pkl", "rb") as f:
-    scaler = pickle.load(f)
-
-# Prepare 14-day sequence (scaled)
-sequence = X_test[0].reshape(1, 14, 1)
-
-# Predict
-prediction_scaled = model.predict(sequence)
-prediction = scaler.inverse_transform([[prediction_scaled[0][0]]])
-print(f"Predicted sales: {prediction[0][0]:.0f} units")
-```
-
-### Load Cross-Validation Results
-
-```python
-import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-
-y_true = np.load("y_test.npy")
-gru_pred = np.load("gru_y_pred.npy")
-
-rmse = np.sqrt(mean_squared_error(y_true, gru_pred))
-mae = mean_absolute_error(y_true, gru_pred)
-
-print(f"GRU RMSE: {rmse:.2f} units")
-print(f"GRU MAE: {mae:.2f} units")
-```
-
-## 🔍 Key Evaluation Metrics
-
-- **RMSE** (Root Mean Squared Error): Penalizes larger errors; in units sold
-- **MAE** (Mean Absolute Error): Average absolute difference; easier to interpret
-- **R²**: Proportion of variance explained (0-1 scale)
-
-Lower RMSE/MAE is better. Higher R² is better.
-
-## 🛠 Troubleshooting
-
-### `scaler.pkl` missing error
+### Models not found error
+Ensure you've trained and saved the models:
 ```bash
 python preprocessing.py
-```
-
-### TensorFlow compatibility issues
-Ensure Python 3.11+ and TensorFlow >= 2.17:
-```bash
-pip install --upgrade tensorflow==2.17.0
-```
-
-### Model loads but predictions are wrong
-Verify `scaler.pkl` matches the training data. Retrain if necessary:
-```bash
-python preprocessing.py
+python train_lstm.py
 python train_gru.py
 ```
 
-## 📚 Report Integration
+### Port already in use (localhost:5000)
+Either kill the process or change the port in `app.py`
 
-This project includes visualizations and results for academic/technical reports:
+### Deployment fails
+Check Cloud Run quotas and ensure service has sufficient permissions:
+```bash
+gcloud run services describe sales-sense --region europe-west9
+```
 
-- `images/cv_results.png` — 5-fold CV comparison chart
-- `images/prediction_full.png` — Full test period predictions
-- `images/prediction_zoom.png` — Zoomed-in view of predictions
-- `images/prediction_residuals.png` — Residual analysis
-- `images/rolling_avg_trend.png` — 7-day rolling average trend
+## 📚 File Descriptions
 
-## 👩‍💻 Authors
+### `app.py`
+Flask application with routes for dashboard and API endpoints. Loads pre-trained models and handles predictions.
 
-**Ons ELFEKIH**  **Guizani Eya**
-IT Engineering Students — Business Intelligence  
+### `preprocessing.py`
+Loads retail data, normalizes with MinMaxScaler, creates sequences with 14-day sliding window.
+
+### `train_lstm.py` & `train_gru.py`
+Model training with validation split, saves trained models to `.h5` format.
+
+### `cross_validation.py`
+5-fold walk-forward time-series cross-validation for robust evaluation.
+
+### `compare.py`
+Compares LSTM and GRU performance metrics.
+
+### `Dockerfile`
+Multi-stage Docker build for production deployment.
+
+### `cloudbuild.yaml`
+Google Cloud Build pipeline configuration for CI/CD.
+
+## 📊 Data Information
+
+**Source:** Retail store inventory dataset  
+**Period:** 2022-2024  
+**Records:** 73,100  
+**Time Series Length:** 731 days  
+**Target Variable:** Daily sales (units)
+
+## 🔐 Security Notes
+
+- Models and data are not committed to version control (use `.gitignore`)
+- API has no authentication (enable if needed for production)
+- Consider rate limiting for prediction API
+
+## 📞 Support & Issues
+
+For issues or questions:
+1. Check logs: `gcloud run logs read sales-sense --limit 50`
+2. Review Flask console output locally
+3. Verify model files exist and are readable
+
+## 📄 License
+
+[Specify your license here]
+
+## 👥 Authors
+
+**Ons ELFEKIH** & **Guizani Eya**  
+IT Engineering Students — Business Intelligence (Semester 2)
