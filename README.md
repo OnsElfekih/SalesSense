@@ -2,13 +2,69 @@
 
 A production-ready deep learning application for predicting daily retail store sales using LSTM and GRU neural networks. Built with Flask and deployed on Google Cloud Run.
 
-## 🎯 Project Overview
+## 🎯 Objective
+
+Build a deep learning system for retail sales forecasting that trains LSTM and GRU models on a real time series dataset and provides an interactive dashboard where users can explore trends and generate predictions.
+
+## 🛠️ Tech Stack
+
+- **Python** — Core language for data processing and model development
+- **TensorFlow** — Deep learning framework for building and training neural networks
+- **NumPy** — Numerical computing for array operations
+- **Pandas** — Data manipulation and analysis
+- **Scikit-learn** — Machine learning utilities (metrics, scaling)
+- **Matplotlib** — Data visualization and prediction plots
+- **Flask** — Web framework for API and dashboard
+- **Google Cloud Run** — Cloud deployment platform
+
+## 📋 Project Overview
 
 This project implements a time-series forecasting system using real-world retail store inventory data (2022-2024, 731 days, 73,100 records). The goal is to predict daily sales using a 14-day sliding window with two recurrent neural network architectures: LSTM and GRU.
 
 **Best Model:** GRU with a mean RMSE of **1,041.34 units** (5-fold cross-validation)
 
-## 📁 Project Structure
+## ✨ Project Highlights
+
+### 🤖 Model Training and Persistence
+- Load and preprocess retail dataset (73,100 records, 731 days)
+- Generate sequences with 14-day sliding window
+- Train LSTM and GRU models with optimized architectures
+- Evaluate performance using RMSE and MAE metrics
+- Save trained models as `.h5` files for production reuse
+
+### 🔄 Cross Validation and Model Selection
+- Apply 5-fold walk-forward validation for time-series integrity
+- Compare LSTM (29,345 params) vs GRU (22,305 params)
+- Select GRU as best model: **1,041.34 RMSE** with 22% fewer parameters
+- Validate generalization and ensure production robustness
+
+### 🔮 Prediction Workflow
+- Use last 14 days of sales data as input
+- Generate next-day prediction from trained model
+- Apply inverse scaling for real-world units
+- Support batch predictions for multiple scenarios
+
+### 📊 Interactive Dashboard
+- Build intuitive interface with HTML/CSS/JavaScript
+- Display dataset insights and performance metrics
+- Allow interactive testing with custom 14-day sequences
+- Real-time prediction visualization with histograms
+- Responsive design for desktop and mobile
+
+### 📈 Data Visualization
+- Plot predictions vs actual values
+- Analyze residuals and error patterns
+- Visualize sales trends with line charts
+- Compare LSTM and GRU predictions
+- Display key metrics on analytics dashboard
+
+### 🚀 Deployment
+- Deploy on Google Cloud Run with automatic CI/CD
+- Load trained models for real-time inference
+- Container-based deployment ensures consistency
+- Scalable infrastructure handles variable traffic
+
+
 
 ```
 SalesSense/
