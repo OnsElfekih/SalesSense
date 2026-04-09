@@ -53,10 +53,6 @@ This project implements a time-series forecasting system using real-world retail
 
 ### 📈 Data Visualization
 - Plot predictions vs actual values
-- Analyze residuals and error patterns
-- Visualize sales trends with line charts
-- Compare LSTM and GRU predictions
-- Display key metrics on analytics dashboard
 
 ### 🚀 Deployment
 - Deploy on Google Cloud Run with automatic CI/CD
