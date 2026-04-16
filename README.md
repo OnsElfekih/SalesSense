@@ -60,8 +60,6 @@ This project implements a time-series forecasting system using real-world retail
 - Container-based deployment ensures consistency
 - Scalable infrastructure handles variable traffic
 
-
-
 ```
 SalesSense/
 ├── 📂 dataset/
@@ -84,8 +82,7 @@ SalesSense/
 ├── gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
 ├── Dockerfile                           # Docker container configuration
 ├── cloudbuild.yaml                      # Google Cloud Build config
-├── requirements.txt                     # Python dependencies
-├── requirements-gcp.txt                 # GCP dependencies
+├── requirements-gcp.txt                 # GCP and App dependencies
 ├── README.md                            # This file
 └── salesPredictionNotebook.ipynb        # Jupyter notebook
 ```
@@ -97,7 +94,7 @@ SalesSense/
 #### 1. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-gcp.txt
 ```
 
 #### 2. Preprocess Data
@@ -132,7 +129,7 @@ python cross_validation.py
 python app.py
 ```
 
-Visit `http://localhost:5000` in your browser.
+Visit `http://localhost:8080` in your browser. (The app defaults to 8080, matching Cloud Run).
 
 ## 🌐 Deployment on Google Cloud Run
 
@@ -159,7 +156,7 @@ gcloud run deploy sales-sense \
   --memory 2Gi
 ```
 
-After deployment, you'll receive a URL like:
+After deployment, you''ll receive a URL like:
 ```
 https://sales-sense-xxxxx-ew.a.run.app
 ```
@@ -231,11 +228,20 @@ Dense: 1 unit (output)
 ### GET /
 Serves the web dashboard
 
+### GET /health
+Returns health status:
+```json
+{
+  "status": "healthy"
+}
+```
+
 ### GET /api/overview
 Returns model metrics:
 ```json
 {
   "best_model": "GRU",
+  "gru_cv_rmse": 1041.34,
   "gru_test_mae": 854.10,
   "test_samples": 144
 }
@@ -269,13 +275,15 @@ Makes a prediction given 14-day sequence:
 Response:
 ```json
 {
-  "prediction": 1234.56
+  "prediction": 1234.56,
+  "status": "success",
+  "input_values": [...]
 }
 ```
 
 ## 📋 Requirements
 
-**Python:** 3.11+
+**Python:** 3.10-slim (Docker base image)
 
 **Core Dependencies:**
 - TensorFlow 2.17.0
@@ -284,20 +292,20 @@ Response:
 - Pandas 2.0.3
 - Scikit-learn 1.3.1
 
-See `requirements.txt` for complete list.
+See `requirements-gcp.txt` for complete list.
 
 ## 🛠️ Troubleshooting
 
 ### Models not found error
-Ensure you've trained and saved the models:
+Ensure you''ve trained and saved the models:
 ```bash
 python preprocessing.py
 python train_lstm.py
 python train_gru.py
 ```
 
-### Port already in use (localhost:5000)
-Either kill the process or change the port in `app.py`
+### Port already in use (localhost:8080)
+Either kill the process or change the `PORT` environment variable locally block.
 
 ### Deployment fails
 Check Cloud Run quotas and ensure service has sufficient permissions:
@@ -323,7 +331,7 @@ Model training with validation split, saves trained models to `.h5` format.
 Compares LSTM and GRU performance metrics.
 
 ### `Dockerfile`
-Multi-stage Docker build for production deployment.
+Multi-stage Docker build for production deployment on Google Cloud Run.
 
 ### `cloudbuild.yaml`
 Google Cloud Build pipeline configuration for CI/CD.
@@ -356,4 +364,4 @@ For issues or questions:
 ## 👥 Authors
 
 **Ons ELFEKIH** & **Guizani Eya**  
-IT Engineering Students — Business Intelligence (Semester 2)
+IT Engineering Students — Business Intelligence 
