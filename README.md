@@ -65,29 +65,28 @@ This project implements a time-series forecasting system using real-world retail
 ```
 SalesSense/
 ├── 📂 dataset/
-│   └── retail_store_inventory.csv       # Raw data (73,100 records)
+│   └── 📊 retail_store_inventory.csv       # Raw data (73,100 records)
 ├── 📂 photos/                           # Project images
 ├── 📂 templates/
-│   └── index.html                       # Web dashboard (HTML/CSS/JS)
-├── app.py                               # Flask web application & API
-├── preprocessing.py                     # Data loading, normalization, sequence generation
-├── train_lstm.py                        # LSTM model training and evaluation
-├── train_gru.py                         # GRU model training and evaluation
-├── cross_validation.py                  # 5-fold walk-forward time-series CV
-├── compare.py                           # Model comparison and metrics
-├── visualise_predictions.py             # Generate prediction plots
-├── generate_logo.py                     # Logo generation script
-├── best_model.h5                        # Trained GRU model (production)
-├── gru_model.h5, lstm_model.h5          # Saved models
-├── X_train.npy, X_test.npy              # Preprocessed sequences
-├── y_train.npy, y_test.npy              # Target values
-├── gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
-├── Dockerfile                           # Docker container configuration
-├── cloudbuild.yaml                      # Google Cloud Build config
-├── requirements.txt                     # Python dependencies
-├── requirements-gcp.txt                 # GCP dependencies
-├── README.md                            # This file
-└── salesPredictionNotebook.ipynb        # Jupyter notebook
+│   └── 🌐 index.html                       # Web dashboard (HTML/CSS/JS)
+├── 🐍 app.py                               # Flask web application & API
+├── ⚙️ preprocessing.py                     # Data loading, normalization, sequence generation
+├── 🧠 train_lstm.py                        # LSTM model training and evaluation
+├── 🧠 train_gru.py                         # GRU model training and evaluation
+├── 🔄 cross_validation.py                  # 5-fold walk-forward time-series CV
+├── ⚖️ compare.py                           # Model comparison and metrics
+├── 📈 visualise_predictions.py             # Generate prediction plots
+├── 🎨 generate_logo.py                     # Logo generation script
+├── 💾 best_model.h5                        # Trained GRU model (production)
+├── 💾 gru_model.h5, lstm_model.h5          # Saved models
+├── 🔢 X_train.npy, X_test.npy              # Preprocessed sequences
+├── 🎯 y_train.npy, y_test.npy              # Target values
+├── 🔮 gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
+├── 🐳 Dockerfile                           # Docker container configuration
+├── ☁️ cloudbuild.yaml                      # Google Cloud Build config
+├── 📦 requirements-gcp.txt                 # Python dependencies
+├── 📖 README.md                            # This file
+└── 📓 salesPredictionNotebook.ipynb        # Jupyter notebook
 ```
 
 ## 🚀 Quick Start
@@ -97,7 +96,7 @@ SalesSense/
 #### 1. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-gcp.txt
 ```
 
 #### 2. Preprocess Data
@@ -132,7 +131,7 @@ python cross_validation.py
 python app.py
 ```
 
-Visit `http://localhost:5000` in your browser.
+Visit `http://localhost:8080` in your browser. (The app defaults to 8080).
 
 ## 🌐 Deployment on Google Cloud Run
 
@@ -231,13 +230,26 @@ Dense: 1 unit (output)
 ### GET /
 Serves the web dashboard
 
+### GET /health
+Returns health check status:
+```json
+{
+  "status": "healthy"
+}
+```
+
 ### GET /api/overview
 Returns model metrics:
 ```json
 {
   "best_model": "GRU",
+  "gru_cv_rmse": 1041.34,
   "gru_test_mae": 854.10,
-  "test_samples": 144
+  "test_samples": 144,
+  "lstm_rmse": 1045.84,
+  "lstm_mae": 854.34,
+  "gru_rmse": 1041.34,
+  "gru_mae": 854.10
 }
 ```
 
@@ -269,13 +281,15 @@ Makes a prediction given 14-day sequence:
 Response:
 ```json
 {
-  "prediction": 1234.56
+  "prediction": 1234.56,
+  "input_values": [...],
+  "status": "success"
 }
 ```
 
 ## 📋 Requirements
 
-**Python:** 3.11+
+**Python:** 3.10-slim (as defined in `Dockerfile`)
 
 **Core Dependencies:**
 - TensorFlow 2.17.0
@@ -284,7 +298,7 @@ Response:
 - Pandas 2.0.3
 - Scikit-learn 1.3.1
 
-See `requirements.txt` for complete list.
+See `requirements-gcp.txt` for complete list.
 
 ## 🛠️ Troubleshooting
 
@@ -296,8 +310,8 @@ python train_lstm.py
 python train_gru.py
 ```
 
-### Port already in use (localhost:5000)
-Either kill the process or change the port in `app.py`
+### Port already in use (localhost:8080)
+Either kill the process or change the `PORT` environment variable in `app.py`
 
 ### Deployment fails
 Check Cloud Run quotas and ensure service has sufficient permissions:
@@ -323,7 +337,7 @@ Model training with validation split, saves trained models to `.h5` format.
 Compares LSTM and GRU performance metrics.
 
 ### `Dockerfile`
-Multi-stage Docker build for production deployment.
+Multi-stage Docker build for production deployment on Google Cloud Run.
 
 ### `cloudbuild.yaml`
 Google Cloud Build pipeline configuration for CI/CD.
