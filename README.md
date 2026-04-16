@@ -63,28 +63,28 @@ This project implements a time-series forecasting system using real-world retail
 ```
 SalesSense/
 ├── 📂 dataset/
-│   └── retail_store_inventory.csv       # Raw data (73,100 records)
+│   └── 📊 retail_store_inventory.csv       # Raw data (73,100 records)
 ├── 📂 photos/                           # Project images
 ├── 📂 templates/
-│   └── index.html                       # Web dashboard (HTML/CSS/JS)
-├── app.py                               # Flask web application & API
-├── preprocessing.py                     # Data loading, normalization, sequence generation
-├── train_lstm.py                        # LSTM model training and evaluation
-├── train_gru.py                         # GRU model training and evaluation
-├── cross_validation.py                  # 5-fold walk-forward time-series CV
-├── compare.py                           # Model comparison and metrics
-├── visualise_predictions.py             # Generate prediction plots
-├── generate_logo.py                     # Logo generation script
-├── best_model.h5                        # Trained GRU model (production)
-├── gru_model.h5, lstm_model.h5          # Saved models
-├── X_train.npy, X_test.npy              # Preprocessed sequences
-├── y_train.npy, y_test.npy              # Target values
-├── gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
-├── Dockerfile                           # Docker container configuration
-├── cloudbuild.yaml                      # Google Cloud Build config
-├── requirements-gcp.txt                 # GCP and App dependencies
-├── README.md                            # This file
-└── salesPredictionNotebook.ipynb        # Jupyter notebook
+│   └── 🌐 index.html                       # Web dashboard (HTML/CSS/JS)
+├── 🐍 app.py                               # Flask web application & API
+├── ⚙️ preprocessing.py                     # Data loading, normalization, sequence generation
+├── 🧠 train_lstm.py                        # LSTM model training and evaluation
+├── 🧠 train_gru.py                         # GRU model training and evaluation
+├── 🔄 cross_validation.py                  # 5-fold walk-forward time-series CV
+├── ⚖️ compare.py                           # Model comparison and metrics
+├── 📈 visualise_predictions.py             # Generate prediction plots
+├── 🎨 generate_logo.py                     # Logo generation script
+├── 💾 best_model.h5                        # Trained GRU model (production)
+├── 💾 gru_model.h5, lstm_model.h5          # Saved models
+├── 🔢 X_train.npy, X_test.npy              # Preprocessed sequences
+├── 🎯 y_train.npy, y_test.npy              # Target values
+├── 🔮 gru_y_pred.npy, lstm_y_pred.npy      # Model predictions
+├── 🐳 Dockerfile                           # Docker container configuration
+├── ☁️ cloudbuild.yaml                      # Google Cloud Build config
+├── 📦 requirements-gcp.txt                 # Python dependencies
+├── 📖 README.md                            # This file
+└── 📓 salesPredictionNotebook.ipynb        # Jupyter notebook
 ```
 
 ## 🚀 Quick Start
