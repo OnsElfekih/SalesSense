@@ -76,7 +76,6 @@ SalesSense/
 ├── 🔄 cross_validation.py                  # 5-fold walk-forward time-series CV
 ├── ⚖️ compare.py                           # Model comparison and metrics
 ├── 📈 visualise_predictions.py             # Generate prediction plots
-├── 🎨 generate_logo.py                     # Logo generation script
 ├── 💾 best_model.h5                        # Trained GRU model (production)
 ├── 💾 gru_model.h5, lstm_model.h5          # Saved models
 ├── 🔢 X_train.npy, X_test.npy              # Preprocessed sequences
