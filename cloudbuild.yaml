@@ -26,7 +26,7 @@ steps:
       - '--image'
       - 'gcr.io/$PROJECT_ID/sales-sense:$SHORT_SHA'
       - '--region'
-      - 'us-central1'
+      - 'europe-west9'
       - '--allow-unauthenticated'
       - '--platform'
       - 'managed'
